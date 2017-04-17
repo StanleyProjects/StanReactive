@@ -1,0 +1,8 @@
+
+allprojects {
+  ext {
+    applicationId = 'stan.reactive'
+    versionCode = 1704171405
+    versionName = "0.00.02"
+  }
+}
