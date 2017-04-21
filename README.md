@@ -10,4 +10,12 @@ This project is based on:
 - **SingleObservable** - emit only one object if work after the subscription was successful
 - **StreamObservable** - emit stream data and notify about complete if work after the subscription was successful
 
+Operators:
+- **map** - convert observe object to other object
+- **flat** - make other observable from observe object
+- **chain** - run all observables in chain with order
+- **merge** - observe tuple of two objects from two other observables when their subscription finish successful
+
+see [sample](https://github.com/StanleyProjects/StanReactive/tree/master/sample/src/main/java/stan/reactive/sample)
+
 All observables notify about error (with *Throwable*) if work after the subscription was not successful
