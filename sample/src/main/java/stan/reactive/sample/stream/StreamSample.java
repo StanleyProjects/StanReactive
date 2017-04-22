@@ -1,5 +1,6 @@
 package stan.reactive.sample.stream;
 
+import stan.reactive.Func;
 import stan.reactive.stream.StreamObservable;
 import stan.reactive.stream.StreamObserver;
 
@@ -7,11 +8,11 @@ public class StreamSample
 {
     static public void sampleStreamObservable()
     {
-        successStreamObservable().subscribe(new StreamObserver<Integer>()
+        successObserveAnimals().subscribe(new StreamObserver<String>()
         {
-            public void next(Integer integer)
+            public void next(String s)
             {
-                System.out.println(integer);
+                System.out.println(s);
             }
             public void complete()
             {
@@ -38,22 +39,23 @@ public class StreamSample
             }
         });
     }
-    static private StreamObservable<Integer> successStreamObservable()
+    static private StreamObservable<String> successObserveAnimals()
     {
-        return new StreamObservable<Integer>()
+        return new StreamObservable<String>()
         {
-            public void subscribe(StreamObserver<Integer> o)
+            public void subscribe(StreamObserver<String> o)
             {
-                System.out.println("subscribe to StreamObservable in process...\nvalues:");
-                o.next(1);
-                o.next(2);
-                o.next(3);
-                o.next(4);
-                o.next(5);
-                o.next(6);
-                o.next(7);
-                o.next(8);
-                o.next(9);
+                System.out.println("subscribe to StreamObservable in process...");
+                o.next("Cat");
+                o.next("Dog");
+                o.next("Penguin");
+                o.next("Platypus");
+                o.next("Elephant");
+                o.next("Camel");
+                o.next("Goat");
+                o.next("Lion");
+                o.next("Turtle");
+                o.next("Crab");
                 o.complete();
             }
         };
@@ -75,4 +77,61 @@ public class StreamSample
             }
         };
     }
+
+    static public void sampleStreamObservableMap()
+    {
+        System.out.print("map animals in process...\n");
+        successObserveAnimals().map(lengthMap).subscribe(new StreamObserver<Integer>()
+        {
+            public void next(Integer integer)
+            {
+                System.out.print(integer + " ");
+            }
+            public void complete()
+            {
+                System.out.print("\nmap animals complete success");
+            }
+            public void error(Throwable t)
+            {
+                //Not possible in this case!
+            }
+        });
+    }
+    static private Func<String, Integer> lengthMap = new Func<String, Integer>()
+    {
+        public Integer call(String s)
+        {
+            return s.length();
+        }
+    };
+
+    static public void sampleStreamObservableFilter()
+    {
+        System.out.print("filter animals in process...\n");
+        successObserveAnimals().filter(stringFilter).subscribe(new StreamObserver<String>()
+        {
+            public void next(String s)
+            {
+                System.out.print(s + " ");
+            }
+            public void complete()
+            {
+                System.out.print("\nfilter animals complete success");
+            }
+            public void error(Throwable t)
+            {
+                //Not possible in this case!
+            }
+        });
+    }
+    static private Func<String, Boolean> stringFilter = new Func<String, Boolean>()
+    {
+        public Boolean call(String s)
+        {
+            //all strings who begins with 'c' character
+            return s.length() != 0 && String.valueOf(s.charAt(0))
+                                            .toLowerCase()
+                                            .compareTo("c") == 0;
+        }
+    };
 }

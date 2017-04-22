@@ -15,6 +15,7 @@ Operators:
 - **flat** - make other observable from observe object
 - **chain** - run all observables in chain with order
 - **merge** - observe tuple of two objects from two other observables when their subscription finish successful
+- **filter** - emit only objects who satisfy condition
 
 see [sample](https://github.com/StanleyProjects/StanReactive/tree/master/sample/src/main/java/stan/reactive/sample)
 

@@ -22,5 +22,9 @@ public class App
         SingleSample.sampleSingleObservableChain();
         System.out.println("\n\tSample SingleObservable Merge operator");
         SingleSample.sampleSingleObservableMerge();
+        System.out.println("\n\tSample StreamObservable Map operator");
+        StreamSample.sampleStreamObservableMap();
+        System.out.println("\n\tSample StreamObservable Filter operator");
+        StreamSample.sampleStreamObservableFilter();
     }
 }
