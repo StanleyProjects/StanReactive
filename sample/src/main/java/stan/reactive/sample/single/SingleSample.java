@@ -1,5 +1,9 @@
 package stan.reactive.sample.single;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import stan.reactive.Func;
 import stan.reactive.Tuple;
 import stan.reactive.single.SingleObservable;
@@ -9,7 +13,7 @@ public class SingleSample
 {
     static public void sampleSingleObservable()
     {
-        successSingleObservable().subscribe(new SingleObserver<String>()
+        successObserveAnimals().subscribe(new SingleObserver<String>()
         {
             public void success(String s)
             {
@@ -32,14 +36,25 @@ public class SingleSample
             }
         });
     }
-    static private SingleObservable<String> successSingleObservable()
+    static private SingleObservable<String> successObserveAnimals()
     {
         return new SingleObservable<String>()
         {
             public void subscribe(SingleObserver<String> o)
             {
                 System.out.println("subscribe to SingleObservable in process...");
-                o.success("hi from SingleObservable :)");
+                o.success("Cat Dog Penguin Platypus Elephant");
+            }
+        };
+    }
+    static private SingleObservable<String> successObservePlants()
+    {
+        return new SingleObservable<String>()
+        {
+            public void subscribe(SingleObserver<String> o)
+            {
+                System.out.println("subscribe to SingleObservable in process...");
+                o.success("Oak Raspberries Bamboo Potatoes Corn Mango");
             }
         };
     }
@@ -57,25 +72,26 @@ public class SingleSample
 
     static public void sampleSingleObservableMap()
     {
-        map().subscribe(new SingleObserver.Just<String>()
+        map().subscribe(new SingleObserver.Just<List<String>>()
         {
-            public void success(String s)
+            public void success(List<String> list)
             {
-                System.out.println(s);
+                System.out.println("animals: " + list);
             }
         });
     }
-    static private SingleObservable<String> map()
+    static private SingleObservable<List<String>> map()
     {
-        return successSingleObservable().map(new Func<String, String>()
-        {
-            public String call(String s)
-            {
-                System.out.println("map string to other string in process...");
-                return "successSingleObservable emmit string: \"" + s + "\"";
-            }
-        });
+        return successObserveAnimals().map(splitMap);
     }
+    static private Func<String, List<String>> splitMap = new Func<String, List<String>>()
+    {
+        public List<String> call(String s)
+        {
+            System.out.println("map string to other string in process...");
+            return Arrays.asList(s.split(" "));
+        }
+    };
 
     static public void sampleSingleObservableFlat()
     {
@@ -89,21 +105,22 @@ public class SingleSample
     }
     static private SingleObservable<Integer> flat()
     {
-        return map().flat(new Func<String, SingleObservable<Integer>>()
-        {
-            public SingleObservable<Integer> call(final String s)
-            {
-                System.out.println("flat string to SingleObservable for emmit string length in process...");
-                return new SingleObservable<Integer>()
-                {
-                    public void subscribe(SingleObserver<Integer> o)
-                    {
-                        o.success(s.length());
-                    }
-                };
-            }
-        });
+        return map().flat(sizeMap);
     }
+    static private Func<List<String>, SingleObservable<Integer>> sizeMap = new Func<List<String>, SingleObservable<Integer>>()
+    {
+        public SingleObservable<Integer> call(final List<String> list)
+        {
+            System.out.println("flat string to SingleObservable for emmit string length in process...");
+            return new SingleObservable<Integer>()
+            {
+                public void subscribe(SingleObserver<Integer> o)
+                {
+                    o.success(list.size());
+                }
+            };
+        }
+    };
 
     static public void sampleSingleObservableChain()
     {
@@ -118,17 +135,17 @@ public class SingleSample
     static private SingleObservable<Long> chain()
     {
         final long time = System.nanoTime();
-        return flat().chain(new SingleObserver.Just<Integer>()
+        return successObserveAnimals().map(splitMap).flat(sizeMap).chain(new SingleObserver.Just<Integer>()
         {
             public void success(Integer integer)
             {
-                System.out.println("flat success, move on...");
+                System.out.println("flat "+integer+" animals success, move on...");
             }
-        }, flat()).chain(new SingleObserver.Just<Integer>()
+        }, successObservePlants().map(splitMap).flat(sizeMap)).chain(new SingleObserver.Just<Integer>()
         {
             public void success(Integer integer)
             {
-                System.out.println("flat success again, move on...");
+                System.out.println("flat "+integer+" plants success now, move on...");
             }
         }, new SingleObservable<Long>()
         {
@@ -142,16 +159,19 @@ public class SingleSample
 
     static public void sampleSingleObservableMerge()
     {
-        merge().subscribe(new SingleObserver.Just<Tuple<Integer, Long>>()
+        mergeAnimalsWithPlants().subscribe(new SingleObserver.Just<Tuple<List<String>, List<String>>>()
         {
-            public void success(Tuple<Integer, Long> tuple)
+            public void success(Tuple<List<String>, List<String>> tuple)
             {
-                System.out.println("chars count = " + tuple.first() + " and time spent = " + tuple.second());
+                System.out.println("merge animals with plants in process...");
+                List<String> list = new ArrayList<String>(tuple.first());
+                list.addAll(tuple.second());
+                System.out.println("complete list: " + list);
             }
         });
     }
-    static private SingleObservable<Tuple<Integer, Long>> merge()
+    static private SingleObservable<Tuple<List<String>, List<String>>> mergeAnimalsWithPlants()
     {
-        return flat().merge(chain());
+        return successObserveAnimals().map(splitMap).merge(successObservePlants().map(splitMap));
     }
 }
