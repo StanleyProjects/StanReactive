@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import stan.reactive.Func;
+import stan.reactive.functions.Apply;
+import stan.reactive.functions.Func;
 import stan.reactive.Tuple;
+import stan.reactive.functions.Worker;
 import stan.reactive.single.SingleObservable;
 import stan.reactive.single.SingleObserver;
 
@@ -38,14 +40,22 @@ public class SingleSample
     }
     static private SingleObservable<String> successObserveAnimals()
     {
-        return new SingleObservable<String>()
+        return SingleObservable.create(new Apply<String>()
         {
-            public void subscribe(SingleObserver<String> o)
+            public String apply()
             {
                 System.out.println("subscribe to SingleObservable in process...");
-                o.success("Cat Dog Penguin Platypus Elephant");
+                return "Cat Dog Penguin Platypus Elephant";
             }
-        };
+        });
+//        return new SingleObservable<String>()
+//        {
+//            public void subscribe(SingleObserver<String> o)
+//            {
+//                System.out.println("subscribe to SingleObservable in process...");
+//                o.success("Cat Dog Penguin Platypus Elephant");
+//            }
+//        };
     }
     static private SingleObservable<String> successObservePlants()
     {
@@ -60,14 +70,23 @@ public class SingleSample
     }
     static private SingleObservable<String> errorSingleObservable()
     {
-        return new SingleObservable<String>()
+        return SingleObservable.create(new Worker<String>()
         {
-            public void subscribe(SingleObserver<String> o)
+            public String work()
+                    throws Throwable
             {
                 System.out.println("subscribe to SingleObservable in process...");
-                o.error(new Exception("something wrong :("));
+                throw new Exception("something wrong :(");
             }
-        };
+        });
+//        return new SingleObservable<String>()
+//        {
+//            public void subscribe(SingleObserver<String> o)
+//            {
+//                System.out.println("subscribe to SingleObservable in process...");
+//                o.error(new Exception("something wrong :("));
+//            }
+//        };
     }
 
     static public void sampleSingleObservableMap()
@@ -147,14 +166,14 @@ public class SingleSample
             {
                 System.out.println("flat "+integer+" plants success now, move on...");
             }
-        }, new SingleObservable<Long>()
+        }, SingleObservable.create(new Apply<Long>()
         {
-            public void subscribe(SingleObserver<Long> o)
+            public Long apply()
             {
                 System.out.println("subscribe chain in process...");
-                o.success(System.nanoTime() - time);
+                return System.nanoTime() - time;
             }
-        });
+        }));
     }
 
     static public void sampleSingleObservableMerge()

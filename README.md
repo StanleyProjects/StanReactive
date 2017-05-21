@@ -17,6 +17,8 @@ Operators:
 - **merge** - observe tuple of two objects from two other observables when their subscription finish successful
 - **filter** - emit only objects who satisfy condition
 
+Observables can convert from\to other type observables + can create chains
+
 see [sample](https://github.com/StanleyProjects/StanReactive/tree/master/sample/src/main/java/stan/reactive/sample)
 
 All observables notify about error (with *Throwable*) if work after the subscription was not successful

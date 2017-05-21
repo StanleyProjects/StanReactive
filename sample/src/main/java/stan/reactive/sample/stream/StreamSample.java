@@ -1,6 +1,10 @@
 package stan.reactive.sample.stream;
 
-import stan.reactive.Func;
+import java.util.Arrays;
+import java.util.List;
+
+import stan.reactive.functions.Apply;
+import stan.reactive.functions.Func;
 import stan.reactive.stream.StreamObservable;
 import stan.reactive.stream.StreamObserver;
 
@@ -8,7 +12,7 @@ public class StreamSample
 {
     static public void sampleStreamObservable()
     {
-        successObserveAnimals().subscribe(new StreamObserver<String>()
+        successObserveAnimals().subscribe(new StreamObserver.Just<String>()
         {
             public void next(String s)
             {
@@ -18,11 +22,22 @@ public class StreamSample
             {
                 System.out.println("subscribe to StreamObservable complete success");
             }
-            public void error(Throwable t)
-            {
-                System.out.println("subscribe to StreamObservable with error: \"" + t.getMessage() + "\"");//Not possible in this case!
-            }
         });
+//        successObserveAnimals().subscribe(new StreamObserver<String>()
+//        {
+//            public void next(String s)
+//            {
+//                System.out.println(s);
+//            }
+//            public void complete()
+//            {
+//                System.out.println("subscribe to StreamObservable complete success");
+//            }
+//            public void error(Throwable t)
+//            {
+//                System.out.println("subscribe to StreamObservable with error: \"" + t.getMessage() + "\"");//Not possible in this case!
+//            }
+//        });
         errorStreamObservable().subscribe(new StreamObserver<Integer>()
         {
             public void next(Integer integer)
@@ -41,24 +56,33 @@ public class StreamSample
     }
     static private StreamObservable<String> successObserveAnimals()
     {
-        return new StreamObservable<String>()
+//        return StreamObservable.create("Cat", "Dog", "Penguin", "Platypus", "Elephant", "Camel", "Goat", "Lion", "Turtle", "Crab");
+        return StreamObservable.create(new Apply<List<String>>()
         {
-            public void subscribe(StreamObserver<String> o)
+            public List<String> apply()
             {
                 System.out.println("subscribe to StreamObservable in process...");
-                o.next("Cat");
-                o.next("Dog");
-                o.next("Penguin");
-                o.next("Platypus");
-                o.next("Elephant");
-                o.next("Camel");
-                o.next("Goat");
-                o.next("Lion");
-                o.next("Turtle");
-                o.next("Crab");
-                o.complete();
+                return Arrays.asList("Cat", "Dog", "Penguin", "Platypus", "Elephant", "Camel", "Goat", "Lion", "Turtle", "Crab");
             }
-        };
+        });
+//        return new StreamObservable<String>()
+//        {
+//            public void subscribe(StreamObserver<String> o)
+//            {
+//                System.out.println("subscribe to StreamObservable in process...");
+//                o.next("Cat");
+//                o.next("Dog");
+//                o.next("Penguin");
+//                o.next("Platypus");
+//                o.next("Elephant");
+//                o.next("Camel");
+//                o.next("Goat");
+//                o.next("Lion");
+//                o.next("Turtle");
+//                o.next("Crab");
+//                o.complete();
+//            }
+//        };
     }
     static private StreamObservable<Integer> errorStreamObservable()
     {

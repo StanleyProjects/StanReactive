@@ -1,5 +1,6 @@
 package stan.reactive.sample.notify;
 
+import stan.reactive.functions.Action;
 import stan.reactive.notify.NotifyObservable;
 import stan.reactive.notify.NotifyObserver;
 
@@ -7,17 +8,24 @@ public class NotifySample
 {
     static public void sampleNotifyObservable()
     {
-        successNotifyObservable().subscribe(new NotifyObserver()
+        successNotifyObservable().subscribe(new NotifyObserver.Just()
         {
             public void notice()
             {
                 System.out.println("subscribe to NotifyObservable success");
             }
-            public void error(Throwable t)
-            {
-                System.out.println("subscribe to NotifyObservable with error: \"" + t.getMessage() + "\"");//Not possible in this case!
-            }
         });
+//        successNotifyObservable().subscribe(new NotifyObserver()
+//        {
+//            public void notice()
+//            {
+//                System.out.println("subscribe to NotifyObservable success");
+//            }
+//            public void error(Throwable t)
+//            {
+//                System.out.println("subscribe to NotifyObservable with error: \"" + t.getMessage() + "\"");//Not possible in this case!
+//            }
+//        });
         errorNotifyObservable().subscribe(new NotifyObserver()
         {
             public void notice()
@@ -32,24 +40,40 @@ public class NotifySample
     }
     static private NotifyObservable successNotifyObservable()
     {
-        return new NotifyObservable()
+        return NotifyObservable.create(new Runnable()
         {
-            public void subscribe(NotifyObserver o)
+            public void run()
             {
                 System.out.println("subscribe to NotifyObservable in process...");
-                o.notice();
             }
-        };
+        });
+//        return new NotifyObservable()
+//        {
+//            public void subscribe(NotifyObserver o)
+//            {
+//                System.out.println("subscribe to NotifyObservable in process...");
+//                o.notice();
+//            }
+//        };
     }
     static private NotifyObservable errorNotifyObservable()
     {
-        return new NotifyObservable()
+        return NotifyObservable.create(new Action()
         {
-            public void subscribe(NotifyObserver o)
+            public void run()
+                    throws Throwable
             {
                 System.out.println("subscribe to NotifyObservable in process...");
-                o.error(new Exception("something wrong :("));
+                throw new Exception("something wrong :(");
             }
-        };
+        });
+//        return new NotifyObservable()
+//        {
+//            public void subscribe(NotifyObserver o)
+//            {
+//                System.out.println("subscribe to NotifyObservable in process...");
+//                o.error(new Exception("something wrong :("));
+//            }
+//        };
     }
 }

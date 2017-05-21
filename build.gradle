@@ -2,7 +2,7 @@
 allprojects {
   ext {
     applicationId = 'stan.reactive'
-    versionCode = 1704220459
-    versionName = "0.00.06"
+    versionCode = 1705212224
+    versionName = "0.00.07"
   }
 }
